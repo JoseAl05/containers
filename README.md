@@ -1,147 +1,124 @@
 ﻿# **Docker vs Kubernetes**
 
-- Docker es más difícil de escalar.
+- Docker is more challenging to scale.
 
-# **¿Qué es Kubernetes?**
+# **What is Kubernetes?**
 
-- Kubernetes es un orquestador de contenedores.
-- Kubernetes es declarativo.
-# **¿Para que sirve Kubernetes?**
+- Kubernetes is a container orchestrator.
+- Kubernetes is declarative.
 
-- Kubernetes se puede conectar a la API de un proveedor Cloud y realizar acciones.
-# **Partes de Kubernetes**
+# **What is Kubernetes used for?**
 
-- Control Pane (Servidores de Kubernetes)
-- Nodos (Instancias)
-- Kubelet (Agente de kubernetes)
-- Kubeproxy (Recibe el tráfico y lo manda a los pods que correspondan)
+- Kubernetes can connect to a Cloud provider's API and perform actions.
+
+# **Components of Kubernetes**
+
+- Control Plane (Kubernetes Servers)
+- Nodes (Instances)
+- Kubelet (Kubernetes Agent)
+- Kubeproxy (Receives traffic and directs it to the corresponding pods)
 - Scheduler
-- Etcd (Base de datos basada en “key value” para guardar el estado del cluster de kubernetes)
-- Cloud Controller Manager (Se conecta a la Api del proveedor de Cloud)
-- KUBECONFIG (Archivo donde están declarados todos los cluster de kubernetes o contextos)
-# **Contextos de Kubernetes**
+- Etcd (Key-value database to store the state of the Kubernetes cluster)
+- Cloud Controller Manager (Connects to the Cloud provider's API)
+- KUBECONFIG (File declaring all Kubernetes clusters or contexts)
 
-- Combinacion de URL del servidor del anfitrión y las credenciales para conectarse a éste.
+# **Kubernetes Contexts**
 
+- Combination of the host server's URL and credentials for connecting to it.
 
 # **Namespaces**
 
-- Division lógica del cluster de kubernetes.
-- Permite separar la carga dentro de un cluster de kubernetes.
+- Logical division of the Kubernetes cluster.
+- Allows separation of workloads within a Kubernetes cluster.
+
 # **Pods**
 
-- Set de Contenedores
-- Pueden correr más de 1 Contenedor
-# **Manifestos de Kubernetes**
+- Set of containers.
+- Can run more than one container.
 
-- Archivos .yml
-# **Manifesto Pod Simple**
+# **Kubernetes Manifests**
 
-- *apiVersion*: Version del recurso de kubernetes (Pod en este caso).
-- *kind:* Tipo de recurso.
-- *metadata:* Nombre del pod. (Se puede agregar etiquetas)
-- *spec:* Declaración de containers que correrán dentro del Pod.
-- Aplicar Pod: *kubetcl apply –f <nombre\_archivo>*
+- .yml files.
 
+# **Simple Pod Manifest**
 
-# **Manifesto Pod Avanzado**
+- *apiVersion*: Kubernetes resource version (Pod in this case).
+- *kind:* Type of resource.
+- *metadata:* Pod name. (Labels can be added)
+- *spec:* Declaration of containers that will run inside the Pod.
+- Applying Pod: *kubectl apply -f <filename>*
 
+# **Advanced Pod Manifest**
 
-- *env:* Variables de entorno.
-- *valueFrom – fieldRef – fieldPath:* Obtener variable desde otra fuente. (Variables reservadas).
-- *resources:* Asignarle recursos a los contenedores.
-  - *requests:* Recursos garantizados al pod. Siempre disponibles
-  - *limits:* Limites que el pod puede usar.
-- Si el Pod supera el limite, el kernel de Linux va a matar el proceso.
-- *readinessProbe:* Es una instrucción para kubernetes para indicarle que el pod está listo para recibir tráfico.
-- *livenessProbe:* Es una instrucción para kubernetes para indicarle que el pod está vivo.
-- *ports:* Exponer puertos.
+- *env:* Environment variables.
+- *valueFrom – fieldRef – fieldPath:* Retrieve variable from another source. (Reserved variables).
+- *resources:* Allocate resources to containers.
+  - *requests:* Guaranteed resources for the pod. Always available.
+  - *limits:* Limits that the pod can use.
+- If the Pod exceeds the limit, the Linux kernel will kill the process.
+- *readinessProbe:* Instruction for Kubernetes to indicate that the pod is ready to receive traffic.
+- *livenessProbe:* Instruction for Kubernetes to indicate that the pod is alive.
+- *ports:* Expose ports.
 
+# **Deployment Manifests**
 
-# **Manifesto Deployments**
+- Template for creating Pods.
+- *replicas:* Number of pods desired in the deployment.
 
-- Template para crear Pods.
+# **DaemonSet Manifest**
 
-- *replicas:* Cantidad de pods que se quiere en el deployment.
+- Pods deployed using DaemonSet will be deployed on all nodes.
 
-# **Manifesto DaemonSet**
+# **StatefulSet and Volumes Manifest**
 
-- El pod desplegado mediante DaemonSet, estará desplegado en todos los nodos.
+- Way to create pods with volumes.
+- Volumes are directories assigned to pods. Directory data is persistent (similar to Docker).
+- *volumeMounts:* Mount volumes to a path and assign them a name.
+- *volumeClaimTemplates:* Declaration of mounted volumes.
+  - *storageClassName:* Kubernetes driver for a provider.
 
-# **Manifesto StatefulSet y Volumenes**
+# **What can Kubernetes manage?**
 
-- Forma de crear pods con volúmenes.
-- Los volúmenes son directorios asignados a los pods. Los datos del directorio no perderan. (Similar a Docker). 
-
-- *volumeMounts:* Montar volúmenes en un Path y asignarle un nombre.
-- *volumeClaimTemplates:* Declaracion de los volúmenes montados.
-  - *storageClassName:* Driver de kubernetes para un proveedor.
-
-# **¿Qué cosas puede manejar Kubernetes?**
-
-- Bases de Datos
+- Databases
 - S3 Buckets
-- LoadBalancers
-# **Networking Kubernetes**
+- Load Balancers
 
-- Cada pod tiene su propia IP
-- IP Routing
-- Los contenedores de cada pod comparten la IP de éste.
-- Permite la conexión entre pods mediante IP Routing.
-# **Servicios en Kubernetes**
+# **Networking in Kubernetes**
 
-- Forma de poder conectar aplicaciones, desde un Cluster o fuera de éste.
+- Each pod has its own IP.
+- IP Routing.
+- Containers in each pod share its IP.
+- Allows connection between pods through IP Routing.
+
+# **Services in Kubernetes**
+
+- Way to connect applications, either within or outside a cluster.
 - ClusterIP
-  - IP Fija dentro del Cluster, que sirve como Load Balancer entre todos los pods asignados al servicio.
-
-- Se crea deployment con un selector con role “hello”.
-- Se crea servicio que apunte al puerto del contenedor.
-- El servicio utiliza el role del deployment. Esto significa que todo el tráfico que utilice este servicio, será re direccionado a los pods con el mismo role.
-- Crea una IP Fija Privada
-
+  - Fixed IP within the cluster, serving as a load balancer among all pods assigned to the service.
 - Node Port
-  - Crea un puerto en cada nodo, que recibe el tráfico y lo envía a los pods deseados.
-
-
-- Se crea deployment con un selector con role “hello”.
-- Se crea servicio que apunte al puerto del contenedor.
-- El servicio utiliza el role del deployment. Esto significa que todo el tráfico que utilice este servicio, será re direccionado a los pods con el mismo role.
-- Se le asigna un puerto publico al servicio, para poder acceder a los nodos a través de este.
-
+  - Creates a port on each node, receiving traffic and sending it to the desired pods.
 - Load Balancer (Digital Ocean)
-  - Crea un load balancer en el proveedor Cloud y re direcciona el tráfico a los pods.
-
-
-- Se crea deployment con un selector con role “hello”.
-- Se crea servicio que apunte al puerto del contenedor.
-- El servicio utiliza el role del deployment. Esto significa que todo el tráfico que utilice este servicio, será re direccionado a los pods con el mismo role.
-- Al aplicar el deployment, el servicio se conectará al proveedor Cloud, poniendo los nodos con sus respectivos pods en un “Load Balancer”.
-- Para acceder al nodo o pods, el servicio crea una IP Publica Fija.
+  - Creates a load balancer in the Cloud provider and redirects traffic to pods.
 
 # **Ingress**
 
-- Tipo de recurso que permite crear accesos a nuestros servicios basados en el PATH
-- Kubernetes creará un deploy de un controlador NGINX
-- NGINX tendrá un controlador especial que leera este tipo de recurso y se autoconfigurara para mandar el trafico al destino deseado.
-- El controlador NGINX Ingress creará un namespace al ser instalado.
-- El controlador NGINX Ingress creará un LoadBalancer al ser instalado.
+- Resource type allowing access to services based on the PATH.
+- Kubernetes creates an NGINX controller deployment.
+- NGINX has a special controller that reads this resource type and self-configures to route traffic to the desired destination.
+- The NGINX Ingress controller creates a namespace when installed.
+- The NGINX Ingress controller creates a LoadBalancer when installed.
 
 # **ConfigMap**
 
-- Archivo que se hostea en Kubernetes.
-- Se puede acceder desde los pods.
-
+- File hosted in Kubernetes.
+- Accessible from pods.
 
 # **Secrets**
 
-- Similar a ConfigMap
-- Contenido (Data) codificado en Base64
-
+- Similar to ConfigMap.
+- Content (Data) encoded in Base64.
 
 # **Kustomize**
 
-- Tipo de recurso que permite generar Manifestos.
-- Genera un hash en los recursos creados cada vez que se modifica el kustomization a modo de versionado.
-
-
-
+- Resource type allowing Manifest generation.
+- Generates a hash on created resources each time the kustomization is modified, serving as versioning.
